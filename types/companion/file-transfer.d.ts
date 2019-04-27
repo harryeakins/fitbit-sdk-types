@@ -1,10 +1,4 @@
 declare module 'file-transfer' {
-	type ReadyState =
-		| 'error'
-		| 'pending'
-		| 'transferring'
-		| 'transferred'
-		| 'canceled';
 	interface FileTransferOptions {}
 	interface FileTransfer
 		extends EventTarget<{
@@ -12,8 +6,12 @@ declare module 'file-transfer' {
 		}> {
 		readonly name: string;
 		onchange: (event: Event) => void;
-		readonly options: FileTransferOptions | undefined;
-		readonly readyState: ReadyState;
+		readonly readyState:
+			| 'canceled'
+			| 'error'
+			| 'pending'
+			| 'transferred'
+			| 'transferring';
 		cancel(): void;
 	}
 	interface Outbox {
@@ -22,7 +20,7 @@ declare module 'file-transfer' {
 			data: ArrayBuffer | ArrayBufferView,
 			options?: FileTransferOptions,
 		): Promise<FileTransfer>;
-		enqueueFile(file: string, name?: string): Promise<FileTransfer>;
+		enumerate(): Promise<FileTransfer[]>;
 	}
 	const outbox: Outbox;
 
@@ -35,21 +33,12 @@ declare module 'file-transfer' {
 		json(): Promise<any>;
 		text(): Promise<string>;
 	}
-	interface NewFileEvent extends Event {
-		readonly file: InboxItem;
-	}
+
 	interface Inbox
 		extends EventTarget<{
-			newfile: NewFileEvent;
+			newfile: Event;
 		}> {
-		onnewfile: (event: NewFileEvent) => void;
-		/**
-		 * Only for device
-		 */
-		nextFile(): string | undefined;
-		/**
-		 * Only for companion
-		 */
+		onnewfile: (event: Event) => void;
 		pop(): Promise<InboxItem>;
 	}
 

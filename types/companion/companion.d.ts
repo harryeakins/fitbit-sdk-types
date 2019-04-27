@@ -2,12 +2,13 @@ declare module 'companion' {
 	interface LaunchReasons {
 		readonly locationChanged:
 			| {
-					position: Position;
+					readonly position: Position;
 			  }
 			| undefined;
 		readonly peerAppLaunched: boolean | undefined;
 		readonly settingsChanged: boolean | undefined;
 		readonly wokenUp: boolean | undefined;
+		readonly fileTransfer: boolean | undefined;
 	}
 	interface SignificantLocationChangeEvent {
 		readonly position: Position;
